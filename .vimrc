@@ -1,176 +1,150 @@
-filetype off
+" Enable filetype plugin for C, C++, and Rust
+autocmd FileType c,cpp,rust setlocal shiftwidth=4 tabstop=4 expandtab " For consistent indentation
 
-"vundle
-"For install vundle git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" ============================
+" Plugin Management (Vundle)
+" ============================
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
-"Plugins
-Plugin 'gmarik/Vundle.vim'
-Plugin 'vim-scripts/indentpython.vim'
-Plugin 'vim-syntastic/syntastic'
-Plugin 'nvie/vim-flake8'
-Plugin 'scrooloose/nerdtree'
-Plugin 'preservim/nerdtreen'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'vim-airline/vim-airline'
-Plugin 'morhetz/gruvbox'
-Plugin 'tpope/vim-fugitive'
-Plugin 'mattn/emmet-vim'
-Plugin 'frazrepo/vim-rainbow'
-Plugin 'tpope/vim-surround'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'maralla/completor.vim'
+" Core Plugins
+Plugin 'gmarik/Vundle.vim'                 " Vundle plugin manager
+Plugin 'vim-airline/vim-airline'           " Status line plugin
+Plugin 'morhetz/gruvbox'                  " Gruvbox color scheme
+Plugin 'joshdick/onedark.vim'             " OneDark color scheme
 
+" File Navigation Plugins
+Plugin 'preservim/nerdtree'               " NERDTree for file navigation
+Plugin 'Xuyuanp/nerdtree-git-plugin'      " Git plugin for NERDTree
+Plugin 'nvim-neo-tree/neo-tree.nvim'      " NeoTree for file navigation
+
+" Coding Utilities
+Plugin 'tpope/vim-fugitive'               " Git integration
+Plugin 'mattn/emmet-vim'                  " Emmet for HTML/CSS
+"Plugin 'frazrepo/vim-rainbow'             " Rainbow parentheses
+Plugin 'tpope/vim-surround'               " Surround text objects
+Plugin 'ryanoasis/vim-devicons'           " Devicons for file types
+"Plugin 'jiangmiao/auto-pairs'             " Auto pairs for brackets/quotes
+
+" ============================
+" C/C++ Specific Plugins
+" ============================
+Plugin 'neoclide/coc.nvim'                " Intellisense for C, C++, Rust using Language Server Protocol (LSP)
+Plugin 'vim-syntastic/syntastic'          " Syntax checking
+Plugin 'rust-lang/rust.vim'              " Rust syntax and features
+Plugin 'octol/vim-cpp-enhanced-highlight' " Enhanced C/C++ highlighting
+Plugin 'majutsushi/tagbar'               " Display code structure in a sidebar
+
+" ============================
+" Rust Specific Plugins
+" ============================
+Plugin 'simrat39/rust-tools.nvim'        " Rust-specific tools for LSP, formatting, and completion
+Plugin 'dense-analysis/ale'              " Asynchronous Lint Engine (ALE) for Rust and C/C++
+
+" ============================
+" Plugin Management End
+" ============================
 call vundle#end()
-filetype plugin indent on
 
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
-highlight BadWhitespace ctermbg=red guibg=darkred
-
-let g:NERDTreeGitStatusIndicatorMapCustom = {
-	            \ 'Modified'  :'✹',
-                \ 'Staged'    :'✚',
-                \ 'Untracked' :'✭',
-                \ 'Renamed'   :'➜',
-                \ 'Unmerged'  :'═',
-                \ 'Deleted'   :'✖',
-                \ 'Dirty'     :'✗',
-                \ 'Ignored'   :'☒',
-                \ 'Clean'     :'✔︎',
-                \ 'Unknown'   :'?',
-                \ }
-
-" Start NERDTree and put the cursor back in the other window.
-autocmd VimEnter * NERDTree | wincmd p
-
-" Exit Vim if NERDTree is the only window remaining in the only tab.
+" ============================
+" NERDTree Configuration
+" ============================
+autocmd VimEnter * NERDTree | wincmd p    " Open NERDTree on startup
 autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+map <C-n> :NERDTreeToggle<CR>             " Toggle NERDTree with Ctrl+n
+map <C-f> :NERDTreeFind<CR>              " Find current file in NERDTree
 
-"Completor
-let g:completor_python_binary = '/path/to/python/with/jedi/installed'
-let g:completor_clang_binary = '/path/to/clang'
-let g:completor_gocode_binary = '/path/to/gocode'
+" ============================
+" Airline Configuration
+" ============================
+let g:airline_powerline_fonts = 1         " Enable powerline fonts for airline
+let g:airline#extensions#tabline#formatter = 'default'   " Set default tabline formatter
+let g:airline#extensions#tabline#enabled = 1   " Enable tabline extension
 
-"Airline
-let g:airline#extensions#tabline#formatter = 'default'
-let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
-let g:airline#extensions#tabline#left_alt_sep = '|'
+" ============================
+" Highlighting and Colors
+" ============================
+au BufRead,BufNewFile * match BadWhitespace /\s\+$/
+highlight BadWhitespace ctermbg=red guibg=darkred  " Highlight trailing spaces in red
+colorscheme gruvbox                       " Use the Gruvbox color scheme
+set background=dark                      " Set dark background
 
-let python_highlight_all=1
-
-"(folder browser) netrw settings
-let g:netrw_banner=0 "no top banner
-let g:netrw_browse_split=4 "open in prior window
-let g:netrw_altv=1 "open splits to the right
-let g:netrw_liststyle=3 "tree view > list view
-let g:netrw_list_hide=netrw_gitignore#Hide()
-let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
-
-
-"Some setting
-"colorscheme gruvbox
-colorscheme koehler
-
-" Line numbers which change relative/absolute in insert/home mode
-:set number relativenumber
-:augroup numbertoggle
-:  autocmd!
-:  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-:  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-:augroup END
-
-" Load syntax and indentation plugins
-if has('filetype')
-  filetype indent plugin on
-endif
+" Syntax Highlighting (For C, C++, Rust)
 if has('syntax')
   syntax on
 endif
 
+" ============================
+" Whitespace Settings
+" ============================
+set list                               " Show whitespace characters
+set listchars=tab:▸\ ,trail:·           " Display tabs and trailing spaces with special symbols
+
+" ============================
+" Basic Settings
+" ============================
 set autoindent
-set nocompatible
 set encoding=utf-8
-set number
-set showmatch
-set history=1000
-set undolevels=1000
-set wildignore=*.swp,*.bak,*.pyc
-set visualbell
-set noerrorbells
-set foldmethod=indent
-set background=dark
-set nocompatible
-set tabstop=4
+set number relativenumber
 set shiftwidth=4
-"set expandtab "convert tab to space
-
-" Better command-line completion & search subdirectories as well
-set path+=**
-set wildmenu
-
-" Show partial commands in the last line of the screen
-set showcmd
-
-" Highlight search results
+set tabstop=4
+set expandtab
 set hlsearch
-
-" Use case insensitive search, except when using capital letters
 set ignorecase
 set smartcase
-
-" show incremental search results as you type
 set incsearch
-
-" allow for unsaved buffers
 set hidden
-
-" Allow backspacing over autoindent, line breaks and start of insert action
-"set backspace=indent,eol,start
-
-" When opening a new line and no filetype-specific indenting is enabled, keep
-" the same indent as the line you're currently on
-set nostartofline
-
-" Display cursor position in bottom bar
-set ruler
-
-" Always display the status line, even if only one window is displayed
+set wildmenu
+set wildignore=*.swp,*.bak,*.pyc
+set path+=**
 set laststatus=2
-
-" Instead of failing a command because of unsaved changes, instead raise a
-" dialogue asking if you wish to save changed files.
-set confirm
-
-" Use visual bell instead of beeping when doing something wrong
-set visualbell
-
-" And reset the terminal code for the visual bell. If visualbell is set, and
-" this line is also included, vim will neither flash nor beep. If visualbell
-" is unset, this does nothing.
-set t_vb=
-
-" Enable use of the mouse for all modes
-if has('mouse')
-  set mouse=a
-endif
-
-" Set the command window height to 2 lines, to avoid many cases of having to
-" "press <Enter> to continue"
+set ruler
+set showcmd
+set mouse=a
 set cmdheight=2
+set ttimeoutlen=200
+set visualbell
+inoremap ( ()<Esc>i
+inoremap [ []<Esc>i
+inoremap { {}<Esc>i
+inoremap ' ''<Esc>i
+inoremap " ""<Esc>i
+inoremap < <> <ESC>i
+autocmd FileType * inoremap <silent> <BS> <C-W>
 
-" Quickly time out on keycodes, but never time out on mappings
-set notimeout ttimeout ttimeoutlen=200
+" ============================
+" Key Mappings
+" ============================
+inoremap jj <ESC>                       " Map 'jj' to Escape in insert mode
+map Y y$                                " Map 'Y' to yank till end of line
 
-" Use <F11> to toggle between 'paste' and 'nopaste'
-set pastetoggle=<F11>
+" ============================
+" C/C++ Specific Settings
+" ============================
+let g:coc_global_extensions = ['coc-clangd', 'coc-ccls', 'coc-pyright', 'coc-rust-analyzer'] " Enable coc extensions for C/C++ using clangd or ccls
 
+" ============================
+" Rust-Specific Settings
+" ============================
+let g:python_highlight_all = 1          " Enable syntax highlighting for all Python objects
+let g:rustfmt_autosave = 1              " Enable auto-formatting for Rust files
 
-" Map Y to act like D and C, i.e. to yank until EOL, rather than act as yy,
-map Y y$
+" ============================
+" Custom Git Status Indicators (NERDTree)
+" ============================
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+\ 'Modified'  :'✹',
+\ 'Staged'    :'✚',
+\ 'Untracked' :'✭',
+\ 'Renamed'   :'➜',
+\ 'Unmerged'  :'═',
+\ 'Deleted'   :'✖',
+\ 'Dirty'     :'✗',
+\ 'Ignored'   :'☒',
+\ 'Clean'     :'✔︎',
+\ 'Unknown'   :'?'
+\ }
 
-" press jj to exit insert mode
-inoremap jj <ESC>
-
+inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
+inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm() : "\<CR>"
