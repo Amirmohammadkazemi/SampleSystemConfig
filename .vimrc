@@ -17,6 +17,7 @@ Plugin 'joshdick/onedark.vim'             " OneDark color scheme
 Plugin 'preservim/nerdtree'               " NERDTree for file navigation
 Plugin 'Xuyuanp/nerdtree-git-plugin'      " Git plugin for NERDTree
 Plugin 'nvim-neo-tree/neo-tree.nvim'      " NeoTree for file navigation
+Plugin 'junegunn/fzf.vim'                   " fzf for working with files
 
 " Coding Utilities
 Plugin 'tpope/vim-fugitive'               " Git integration
@@ -109,7 +110,6 @@ inoremap [ []<Esc>i
 inoremap { {}<Esc>i
 inoremap ' ''<Esc>i
 inoremap " ""<Esc>i
-inoremap < <> <ESC>i
 autocmd FileType * inoremap <silent> <BS> <C-W>
 
 " ============================
@@ -148,3 +148,8 @@ let g:NERDTreeGitStatusIndicatorMapCustom = {
 inoremap <silent><expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <silent><expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<Tab>"
 inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm() : "\<CR>"
+
+" fzf shortcuts
+nnoremap \f :Files<CR>
+nnoremap \b :Buffers<CR>
+nnoremap \h :History<CR>
