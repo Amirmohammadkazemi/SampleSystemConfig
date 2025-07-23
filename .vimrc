@@ -12,6 +12,9 @@ Plugin 'gmarik/Vundle.vim'                 " Vundle plugin manager
 Plugin 'vim-airline/vim-airline'           " Status line plugin
 Plugin 'morhetz/gruvbox'                  " Gruvbox color scheme
 Plugin 'joshdick/onedark.vim'             " OneDark color scheme
+Plugin 'ghifarit53/tokyonight-vim'
+Plugin 'sonph/onehalf', { 'rtp': 'vim' }
+Plugin 'utensils/colors.vim'
 
 " File Navigation Plugins
 Plugin 'preservim/nerdtree'               " NERDTree for file navigation
@@ -67,7 +70,7 @@ let g:airline#extensions#tabline#enabled = 1   " Enable tabline extension
 " ============================
 au BufRead,BufNewFile * match BadWhitespace /\s\+$/
 highlight BadWhitespace ctermbg=red guibg=darkred  " Highlight trailing spaces in red
-colorscheme gruvbox                       " Use the Gruvbox color scheme
+colorscheme solarized                       " Use the Solarized color scheme
 set background=dark                      " Set dark background
 
 " Syntax Highlighting (For C, C++, Rust)
@@ -110,7 +113,9 @@ inoremap [ []<Esc>i
 inoremap { {}<Esc>i
 inoremap ' ''<Esc>i
 inoremap " ""<Esc>i
-autocmd FileType * inoremap <silent> <BS> <C-W>
+
+set foldmethod=syntax
+set foldlevel=99
 
 " ============================
 " Key Mappings
